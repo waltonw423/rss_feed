@@ -1,0 +1,2 @@
+feedparser
+PyRSS2Gen
