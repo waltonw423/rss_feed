@@ -1,0 +1,18 @@
+name: Build RSS
+on:
+  schedule:
+    - cron: "0 */6 * * *"  # every 6 hours
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: { python-version: '3.12' }
+      - run: pip install feedparser PyRSS2Gen
+      - run: python aggregator.py
+      - run: git config user.name "github-actions"
+      - run: git config user.email "actions@github.com"
+      - run: git add aggregated_feed.xml
+      - run: git commit -m "Update aggregated feed" || true
+      - run: git push
