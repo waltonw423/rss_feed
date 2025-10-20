@@ -4,7 +4,24 @@ import feedparser, PyRSS2Gen, datetime
 FEEDS = [
     "https://news.ycombinator.com/rss",
     "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
-    "https://www.reddit.com/r/energy/.rss"
+    "https://www.reddit.com/r/energy/.rss",
+    "https://feeds.bbci.co.uk/news/world/rss.xml",
+    "https://www.theguardian.com/world/rss",
+    "https://apnews.com/news-sitemap-content.xml",
+    "https://www.washingtonpost.com/rss",
+    "https://www.wsj.com/rss/articles.xml",
+    "https://www.politico.com/rss/politics.xml",
+    "https://foreignpolicy.com/feed/",
+    "https://warontherocks.com/feed/",
+    "https://thediplomat.com/feed/",
+    "https://www.rferl.org/api/zbgvmtl-vomx-tpeq_kmr",
+    "https://www.rferl.org/api/zbqiml-vomx-tpeqkmy",
+    "https://www.rferl.org/api/zmoiil-vomx-tpeykmp",
+    "https://www.rferl.org/api/zpgimml-vomx-tpe_m_my",
+    "https://www.themoscowtimes.com/rss/news",
+    "https://www.bellingcat.com/feed/",
+    "https://www.justsecurity.org/feed/",
+    "https://smallwarsjournal.com/feed/"
 ]
 
 entries = []
@@ -23,7 +40,7 @@ entries.sort(key=lambda x: x["pubDate"], reverse=True)
 entries = entries[:50]  # limit output
 
 rss = PyRSS2Gen.RSS2(
-    title="Dillon's Aggregated Feed",
+    title="William's Aggregated Feed",
     link="https://example.com",
     description="Merged RSS feed",
     lastBuildDate=datetime.datetime.now(datetime.timezone.utc),
