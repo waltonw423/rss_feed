@@ -1,4 +1,4 @@
-import feedparser, PyRSS2Gen, datetime
+import feedparser, PyRSS2Gen, datetime, os
 
 # list of source feeds
 FEEDS = [
@@ -26,7 +26,16 @@ FEEDS = [
 
 entries = []
 for url in FEEDS:
-    d = feedparser.parse(url)
+    try:
+        print(f"Parsing {url}...")
+        d = feedparser.parse(url)
+        if d.bozo:
+            print(f"⚠️  Problem parsing {url}: {d.bozo_exception}")
+            continue
+        entries.extend(d.entries)
+    except Exception as e:
+        print(f"Error parsing {url}: {e}")
+        continue
     for e in d.entries:
         entries.append({
             "title": e.title,
