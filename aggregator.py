@@ -1,4 +1,5 @@
-import feedparser, PyRSS2Gen, datetime, os
+import feedparser, PyRSS2Gen, os
+from datetime import datetime, timezone
 
 # list of source feeds
 FEEDS = [
@@ -52,7 +53,7 @@ def get_entry_date(entry):
         except Exception:
             pass
     # fallback: current UTC time if no valid date
-    return datetime.now(datetime.timezone.utc)
+    return datetime.now(timezone.utc)
 
 entries.sort(key=get_entry_date, reverse=True)
 entries = entries[:50]  # limit output
@@ -61,7 +62,7 @@ rss = PyRSS2Gen.RSS2(
     title="William's Aggregated Feed",
     link="https://example.com",
     description="Merged RSS feed",
-    lastBuildDate=datetime.now(datetime.timezone.utc),
+    lastBuildDate=datetime.now(timezone.utc),
     items=[
         PyRSS2Gen.RSSItem(
             title=e["title"],
