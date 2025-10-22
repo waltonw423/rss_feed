@@ -55,3 +55,4 @@ rss = PyRSS2Gen.RSS2(
 )
 
 rss.write_xml(open("aggregated_feed.xml", "w", encoding="utf-8"))
+print("Feed generated:", os.path.abspath("aggregated_feed.xml"))
