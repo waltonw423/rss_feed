@@ -30,36 +30,48 @@ for url in FEEDS:
         if d.bozo:
             print(f"⚠️  Problem parsing {url}: {d.bozo_exception}")
             continue
-        entries.extend(d.entries)
-    except Exception as e:
-        print(f"Error parsing {url}: {e}")
+        for e in d.entries:
+            entries.append({
+                "title": e.get("title", "No title"),
+                "link": e.get("link", ""),
+                "description": getattr(e, "summary", ""),
+                "pubDate": getattr(e, "published_parsed", getattr(e, "updated_parsed", None))
+            })
+    except Exception as ex:
+        print(f"❌ Error parsing {url}: {ex}")
         continue
-    for e in d.entries:
-        entries.append({
-            "title": e.title,
-            "link": e.link,
-            "description": getattr(e, "summary", ""),
-            "pubDate": getattr(e, "published_parsed", datetime.datetime.now(datetime.timezone.utc).timetuple())
-        })
 
-# sort by date, newest first
-entries.sort(key=lambda x: x["pubDate"], reverse=True)
+# ✅ FIX: Safely handle missing or malformed date fields
+from datetime import datetime
+
+def get_entry_date(entry):
+    pd = entry.get("pubDate")
+    if pd:
+        try:
+            return datetime(*pd[:6])
+        except Exception:
+            pass
+    # fallback: current UTC time if no valid date
+    return datetime.now(datetime.timezone.utc)
+
+entries.sort(key=get_entry_date, reverse=True)
 entries = entries[:50]  # limit output
 
 rss = PyRSS2Gen.RSS2(
     title="William's Aggregated Feed",
     link="https://example.com",
     description="Merged RSS feed",
-    lastBuildDate=datetime.datetime.now(datetime.timezone.utc),
+    lastBuildDate=datetime.now(datetime.timezone.utc),
     items=[
         PyRSS2Gen.RSSItem(
             title=e["title"],
             link=e["link"],
             description=e["description"],
-            pubDate=datetime.datetime(*e["pubDate"][:6])
-        ) for e in entries
+            pubDate=get_entry_date(e)
+        )
+        for e in entries
     ]
 )
 
 rss.write_xml(open("aggregated_feed.xml", "w", encoding="utf-8"))
-print("Feed generated:", os.path.abspath("aggregated_feed.xml"))
+print("✅ Feed generated:", os.path.abspath("aggregated_feed.xml"))
