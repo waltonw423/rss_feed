@@ -9,8 +9,6 @@ FEEDS = [
     "https://www.theguardian.com/world/rss",
     "https://apnews.com/news-sitemap-content.xml",
     "https://www.washingtonpost.com/rss",
-    "https://www.wsj.com/rss/articles.xml",
-    "https://www.politico.com/rss/politics.xml",
     "https://foreignpolicy.com/feed/",
     "https://warontherocks.com/feed/",
     "https://thediplomat.com/feed/",
