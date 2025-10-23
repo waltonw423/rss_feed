@@ -20,7 +20,8 @@ FEEDS = [
     "https://www.themoscowtimes.com/rss/news",
     "https://www.bellingcat.com/feed/",
     "https://www.justsecurity.org/feed/",
-    "https://smallwarsjournal.com/feed/"
+    "https://smallwarsjournal.com/feed/",
+    "https://www.thediplomat.com/feed/"
 ]
 
 entries = []
@@ -68,6 +69,7 @@ rss = PyRSS2Gen.RSS2(
             title=e["title"],
             link=e["link"],
             description=e["description"],
+            guid=PyRSS2Gen.Guid(e["link"]),
             pubDate=get_entry_date(e)
         )
         for e in entries
