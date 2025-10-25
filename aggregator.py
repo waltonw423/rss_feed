@@ -21,7 +21,29 @@ FEEDS = [
     "https://www.bellingcat.com/feed/",
     "https://www.justsecurity.org/feed/",
     "https://smallwarsjournal.com/feed/",
-    "https://www.thediplomat.com/feed/"
+    "https://www.thediplomat.com/feed/",
+    "https://www.chathamhouse.org/path/83/feed.xml",
+    "https://www.chathamhouse.org/path/events.xml",
+    "https://www.chathamhouse.org/path/news-releases.xml"
+    "https://feeds.feedburner.com/CarnegieCouncilResourcesRssFeed",
+    "https://feeds.feedburner.com/carnegiecouncil/newsFeed",
+    "https://ecfr.eu/feed/",
+    "https://foreignpolicyblogs.com/feed/",
+    "https://www.fpri.org/feed/",
+    "https://www.cjfp.org/rss/",
+    "https://ucleuropeblog.com/category/foreign-policy-security/feed/",
+    "https://blogs.fcdo.gov.uk/feed/",
+    "https://medium.com/feed/tag/foreign-policy",
+    "https://www.diplomatie.gouv.fr/spip.php?page=backend&id_rubrique=53404/feed",
+    "https://www.thenation.com/subject/foreign-policy/feed/",
+    "https://www.politico.eu/tag/foreign-policy/feed/",
+    "https://www.foreignaffairs.com/rss.xml",
+    "https://www.foreignpolicyjournal.com/feed/",
+    "https://www.e-ir.info/feed/",
+    "https://blogs.lse.ac.uk/internationalrelations/feed/",
+    "https://www.internationalaffairs.org.au/feed/atom/",
+    "https://medium.com/feed/international-affairs-blog",
+    "https://blogs.kent.ac.uk/polir-news/feed/"
 ]
 
 entries = []
