@@ -43,42 +43,85 @@ FEEDS = [
     "https://blogs.lse.ac.uk/internationalrelations/feed/",
     "https://www.internationalaffairs.org.au/feed/atom/",
     "https://medium.com/feed/international-affairs-blog",
-    "https://blogs.kent.ac.uk/polir-news/feed/"
+    "https://blogs.kent.ac.uk/polir-news/feed/",
+    "https://www.atlanticcouncil.org/feed/",
+    "https://www.csis.org/rss.xml",
+    "https://www.rusi.org/rss/latest-commentary.xml",
+    "https://www.rusi.org/rss/latest-publications.xml",
+    "https://foreignpolicy.com/category/the-reading-list/feed/",
+    "https://foreignpolicy.com/category/world-brief/feed/",
+    "https://foreignpolicy.com/category/situation-report/feed/",
+    "https://foreignpolicy.com/tag/editors-picks/feed/",
+    "https://www.crisisgroup.org/rss/139",
+    "https://www.crisisgroup.org/rss",
+    "https://www.crisisgroup.org/rss/56",
+    "https://www.justsecurity.org/feed/",
+    "https://kyivindependent.com/news-archive/rss/",
+    "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/topic/destination/ukraine/rss.xml",
+    "https://eurasianet.org/rss",
+    "https://theconversation.com/us/world/articles.atom",
+    "https://jamestown.org/feed/"
+]
+# keywords that indicate analysis, commentary, or academic content
+KEYWORDS = [
+    "op-ed", "opinion", "commentary", "analysis", "essay", "investigation",
+    "report", "long read", "explainer", "policy brief", "research", "think tank",
+    "paper", "review", "insight", "perspective", "viewpoint"
+]
+
+# region or topic keywords for filtering
+REGION_KEYWORDS = [
+    "russia", "ukraine", "eurasia", "central asia", "kazakhstan", "kyrgyzstan",
+    "uzbekistan", "tajikistan", "turkmenistan", "post-soviet", "nato",
+    "security", "sanctions", "diplomacy", "foreign policy"
 ]
 
 entries = []
 for url in FEEDS:
-    try:
-        print(f"Parsing {url}...")
-        d = feedparser.parse(url)
-        if d.bozo:
-            print(f"⚠️  Problem parsing {url}: {d.bozo_exception}")
-            continue
-        for e in d.entries:
+    print(f"Parsing {url}...")
+    d = feedparser.parse(url)
+    if d.bozo:
+        print(f"⚠️  Problem parsing {url}: {d.bozo_exception}")
+        continue
+    for e in d.entries:
+        try:
+            pub_date = getattr(e, "published_parsed", None)
+            if not pub_date:
+                pub_date = getattr(e, "updated_parsed", None)
             entries.append({
                 "title": e.get("title", "No title"),
                 "link": e.get("link", ""),
                 "description": getattr(e, "summary", ""),
-                "pubDate": getattr(e, "published_parsed", getattr(e, "updated_parsed", None))
+                "pubDate": pub_date
             })
-    except Exception as ex:
-        print(f"❌ Error parsing {url}: {ex}")
-        continue
-
-# ✅ FIX: Safely handle missing or malformed date fields
-from datetime import datetime
+        except Exception as ex:
+            print(f"❌ Error parsing entry from {url}: {ex}")
+            continue
+# removed duplicate import (already imported at top)
 
 def get_entry_date(entry):
     pd = entry.get("pubDate")
     if pd:
         try:
-            return datetime(*pd[:6])
+            # ensure timezone-aware datetime for consistent comparisons
+            return datetime(*pd[:6], tzinfo=timezone.utc)
         except Exception:
             pass
     # fallback: current UTC time if no valid date
     return datetime.now(timezone.utc)
 
-entries.sort(key=get_entry_date, reverse=True)
+
+def compute_priority(entry):
+    """Higher score for entries whose description contains keywords.
+    Analysis keywords are weighted higher than region keywords.
+    """
+    text = (entry.get("description", "") or "").lower()
+    analysis_hits = sum(1 for k in KEYWORDS if k in text)
+    region_hits = sum(1 for k in REGION_KEYWORDS if k in text)
+    return analysis_hits * 2 + region_hits
+
+# prioritize by keyword score first, then by recency
+entries.sort(key=lambda e: (compute_priority(e), get_entry_date(e)), reverse=True)
 entries = entries[:50]  # limit output
 
 rss = PyRSS2Gen.RSS2(
