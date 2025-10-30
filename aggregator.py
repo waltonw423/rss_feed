@@ -79,7 +79,16 @@ REGION_KEYWORDS = [
 entries = []
 for url in FEEDS:
     print(f"Parsing {url}...")
-    d = feedparser.parse(url)
+    try:
+        d = feedparser.parse(
+            url, 
+            request_headers={
+                "User-Agent": "Mozilla/5.0 (compatible; RSS aggregator/1.0; +https://example.com/bot)"
+            }
+        )
+    except Exception as e:
+        print(f"⚠️  Request failed for {url}: {e}")
+        continue
     if d.bozo:
         print(f"⚠️  Problem parsing {url}: {d.bozo_exception}")
         continue
